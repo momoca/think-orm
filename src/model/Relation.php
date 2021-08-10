@@ -80,6 +80,12 @@ abstract class Relation
     protected $withField;
 
     /**
+     * 排除关联数据字段
+     * @var array
+     */
+    protected $withoutField;
+
+    /**
      * 获取关联的所属模型
      * @access public
      * @return Model
@@ -189,30 +195,6 @@ abstract class Relation
     }
 
     /**
-     * 更新数据
-     * @access public
-     * @param  array $data 更新数据
-     * @return integer
-     */
-    public function update(array $data = []): int
-    {
-        return $this->query->update($data);
-    }
-
-    /**
-     * 删除记录
-     * @access public
-     * @param  mixed $data 表达式 true 表示强制删除
-     * @return int
-     * @throws Exception
-     * @throws PDOException
-     */
-    public function delete($data = null): int
-    {
-        return $this->query->delete($data);
-    }
-
-    /**
      * 限制关联数据的数量
      * @access public
      * @param  int $limit 关联数量限制
@@ -233,6 +215,22 @@ abstract class Relation
     public function withField(array $field)
     {
         $this->withField = $field;
+        return $this;
+    }
+
+    /**
+     * 排除关联数据的字段
+     * @access public
+     * @param  array|string $field 关联字段限制
+     * @return $this
+     */
+    public function withoutField($field)
+    {
+        if (is_string($field)) {
+            $field = array_map('trim', explode(',', $field));
+        }
+
+        $this->withoutField = $field;
         return $this;
     }
 

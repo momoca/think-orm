@@ -621,7 +621,15 @@ abstract class BaseQuery
 
             $bind    = $this->bind;
             $total   = $this->count();
-            $results = $this->options($options)->bind($bind)->page($page, $listRows)->select();
+            if ($total > 0) {
+                $results =  $this->options($options)->bind($bind)->page($page, $listRows)->select();
+            } else {
+                if (!empty($this->model)) {
+                    $results = new \think\model\Collection([]);
+                } else {
+                    $results = new \think\Collection([]);
+                }
+            }
         } elseif ($simple) {
             $results = $this->limit(($page - 1) * $listRows, $listRows + 1)->select();
             $total   = null;
@@ -741,7 +749,7 @@ abstract class BaseQuery
 
         return [
             'data'   => $result,
-            'lastId' => $last[$key],
+            'lastId' => $last ? $last[$key] : null,
         ];
     }
 
